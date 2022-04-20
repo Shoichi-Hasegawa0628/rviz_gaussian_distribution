@@ -61,8 +61,8 @@ class VisualizerNode:
         """
         if isinstance(self._manager, AnimatedDistributionManager):
             while not rospy.is_shutdown():
+                self._manager.update()
                 if not self._manager.is_complete():
-                    self._manager.update()
                     self.publish()
 
                 rospy.sleep(0.1)
