@@ -155,6 +155,7 @@ def action_clear():
 # ==================================================================================================
 if __name__ == "__main__":
     rospy.init_node("example_client")
+    rospy.sleep(2.0)
 
     # Publish Gaussian distributions
     for i in range(5):
