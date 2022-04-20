@@ -1,6 +1,6 @@
 # Rviz Gaussian Distribution
-![Image 1](images/overview.png)
-![Image 2](images/animation.gif)
+![Image 1](rviz_gaussian_distribution/images/overview.png)
+![Image 2](rviz_gaussian_distribution/images/animation.gif)
 <!--
 # ==================================================================================================
 #
@@ -29,7 +29,8 @@ The `rviz_gaussian_distribution` package provides visualization of 2D Gaussian D
 --->
 
 ## Setup <a id="Setup"></a>
-    
+In `rviz_gaussian_distribution` pkgs.
+
     pip install -r requirements.txt
 
 <!--
