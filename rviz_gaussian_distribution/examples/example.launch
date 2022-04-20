@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+
+<launch>
+    <arg name="is_animation" default="true"/>
+    <arg name="animation_time" default="1"/>
+
+    <node pkg="rviz_gaussian_distribution" type="main.py" name="example_server" output="screen">
+        <param name="is_animation" value="$(arg is_animation)"/>
+        <param name="animation_time" value="$(arg animation_time)"/>
+
+        <remap from="/input/add" to="/gaussian_distribution/input/add"/>
+        <remap from="/input/remove" to="/gaussian_distribution/input/remove"/>
+        <remap from="/input/clear" to="/gaussian_distribution/input/clear"/>
+        <remap from="/output" to="/gaussian_distribution/output"/>
+        <remap from="/action/add" to="/gaussian_distribution/action/add"/>
+        <remap from="/action/remove" to="/gaussian_distribution/action/remove"/>
+        <remap from="/action/clear" to="/gaussian_distribution/action/clear"/>
+    </node>
+
+    <node pkg="rviz_gaussian_distribution" type="example.py" name="example_client" output="screen">
+        <remap from="/input/add" to="/gaussian_distribution/input/add"/>
+        <remap from="/input/remove" to="/gaussian_distribution/input/remove"/>
+        <remap from="/input/clear" to="/gaussian_distribution/input/clear"/>
+        <remap from="/action/add" to="/gaussian_distribution/action/add"/>
+        <remap from="/action/remove" to="/gaussian_distribution/action/remove"/>
+        <remap from="/action/clear" to="/gaussian_distribution/action/clear"/>
+    </node>
+
+</launch>
+

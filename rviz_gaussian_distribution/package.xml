@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+
+<package format="2">
+  <name>rviz_gaussian_distribution</name>
+  <version>1.0.0</version>
+  <description>The 'rviz_gaussian_distribution' package provides the nodes for visualization of Gaussian Distribution in Rviz.</description>
+
+  <maintainer email="kanechika.akinori@em.ci.ritsumei.ac.jp">Akinori Kanechika</maintainer>
+  <license>MIT</license>
+  <url type="website">http://em.ci.ritsumei.ac.jp/</url>
+  <author email="kanechika.akinori@em.ci.ritsumei.ac.jp">Akinori Kanechika</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>rospy</depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>rviz_gaussian_distribution_msgs</depend>
+</package>
