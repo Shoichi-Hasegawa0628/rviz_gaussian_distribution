@@ -5,6 +5,7 @@ import numpy as np
 import rospy
 import rviz_gaussian_distribution_msgs.msg as rgd_msgs
 import std_msgs.msg as std_msgs
+from modules import dataset
 
 
 # ==================================================================================================
@@ -12,26 +13,30 @@ import std_msgs.msg as std_msgs
 #   ROS Publisher Method
 #
 # ==================================================================================================
-def publish_distribution(id_):
-    """
-    Publish Gaussian distributions
+def publish_distribution(i, mu_set, sigma_set):
 
-    Args:
-        id_ (int):
-
-    """
-    # Generate random 3D points．
-    center_x = random.random() * 4 - 2
-    center_y = random.random() * 4 - 2
-    x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
-    y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    # # Generate random 3D points．
+    # center_x = random.random() * 4 - 2
+    # center_y = random.random() * 4 - 2
+    # x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    # y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    #
+    # # Calc parameters of Gaussian distribution．
+    # mu_x = np.mean(x)
+    # mu_y = np.mean(y)
+    # sigma_x = np.std(x)
+    # sigma_y = np.std(y)
+    # covariance = (np.sum(x * y) / len(x)) - (mu_x * mu_y)
+    # r = random.randint(0, 255)
+    # g = random.randint(0, 255)
+    # b = random.randint(0, 255)
 
     # Calc parameters of Gaussian distribution．
-    mu_x = np.mean(x)
-    mu_y = np.mean(y)
-    sigma_x = np.std(x)
-    sigma_y = np.std(y)
-    covariance = (np.sum(x * y) / len(x)) - (mu_x * mu_y)
+    mu_x = mu_set[i][0]
+    mu_y = mu_set[i][1]
+    sigma_x = np.sqrt(sigma_set[i][0][0])
+    sigma_y = np.sqrt(sigma_set[i][1][1])
+    covariance = sigma_set[i][0][1]
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
@@ -45,7 +50,7 @@ def publish_distribution(id_):
         std_x=sigma_x, std_y=sigma_y,
         covariance=covariance,
         r=r, g=g, b=b,
-        id=id_
+        id=i
     )
     publisher.publish(msg)
 
@@ -83,7 +88,7 @@ def publish_clear():
 #   ROS Action Method
 #
 # ==================================================================================================
-def action_distribution(id_):
+def action_distribution(i, mu_set, sigma_set):
     """
     Publish Gaussian distributions using Actionlib
 
@@ -91,18 +96,27 @@ def action_distribution(id_):
         id_ (int):
 
     """
-    # Generate random 3D points．
-    center_x = random.random() * 4 - 2
-    center_y = random.random() * 4 - 2
-    x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
-    y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    # # Generate random 3D points．
+    # center_x = random.random() * 4 - 2
+    # center_y = random.random() * 4 - 2
+    # x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    # y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    #
+    # # Calc parameters of Gaussian distribution．
+    # mu_x = np.mean(x)
+    # mu_y = np.mean(y)
+    # sigma_x = np.std(x)
+    # sigma_y = np.std(y)
+    # covariance = (np.sum(x * y) / len(x)) - (mu_x * mu_y)
+    # r = random.randint(0, 255)
+    # g = random.randint(0, 255)
+    # b = random.randint(0, 255)
 
-    # Calc parameters of Gaussian distribution．
-    mu_x = np.mean(x)
-    mu_y = np.mean(y)
-    sigma_x = np.std(x)
-    sigma_y = np.std(y)
-    covariance = (np.sum(x * y) / len(x)) - (mu_x * mu_y)
+    mu_x = mu_set[i][0]
+    mu_y = mu_set[i][1]
+    sigma_x = np.sqrt(sigma_set[i][0][0])
+    sigma_y = np.sqrt(sigma_set[i][1][1])
+    covariance = sigma_set[i][0][1]
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
@@ -115,7 +129,7 @@ def action_distribution(id_):
         std_x=sigma_x, std_y=sigma_y,
         covariance=covariance,
         r=r, g=g, b=b,
-        id=id_
+        id=i
     )
     add_action.send_goal(rgd_msgs.AddGoal(msg))
     add_action.wait_for_result()
@@ -157,34 +171,43 @@ if __name__ == "__main__":
     rospy.init_node("example_client")
     rospy.sleep(2.0)
 
+    mu_set, K = dataset.read_mean_of_Gaussian_distribution()
+    sigma_set = dataset.read_variance_of_Gaussian_distribution()
+
+    # print("mu:{}".format(mu_set))
+    # print("sigma_set:{}".format(sigma_set))
+    print("K:{}".format(K))
+
     # Publish Gaussian distributions
-    for i in range(5):
+    for i in range(K):
         if not rospy.is_shutdown():
-            publish_distribution(id_=i)
+            publish_distribution(i, mu_set, sigma_set)
             rospy.sleep(1.0)
 
-    # Remove published distributions
-    for i in range(2):
-        if not rospy.is_shutdown():
-            publish_remove(id_=i)
-            rospy.sleep(1.0)
 
-    # Clear published distributions
-    publish_clear()
-    rospy.sleep(1.0)
 
+    # # Remove published distributions
+    # for i in range(K):
+    #     if not rospy.is_shutdown():
+    #         publish_remove(id_=i)
+    #         rospy.sleep(1.0)
+
+    # # Clear published distributions
+    # publish_clear()
+    # rospy.sleep(1.0)
+    #
     # Action send Gaussian distributions
-    for i in range(5):
-        if not rospy.is_shutdown():
-            action_distribution(id_=i)
-            rospy.sleep(1.0)
-
-    # Remove published distributions
-    for i in range(2):
-        if not rospy.is_shutdown():
-            action_remove(id_=i)
-            rospy.sleep(1.0)
-
-    # Clear published distributions
-    action_clear()
-    rospy.sleep(1.0)
+    # for i in range(K):
+    #     if not rospy.is_shutdown():
+    #         action_distribution(i, mu_set, sigma_set)
+    #         rospy.sleep(1.0)
+    #
+    # # Remove published distributions
+    # for i in range(2):
+    #     if not rospy.is_shutdown():
+    #         action_remove(id_=i)
+    #         rospy.sleep(1.0)
+    #
+    # # Clear published distributions
+    # action_clear()
+    # rospy.sleep(1.0)

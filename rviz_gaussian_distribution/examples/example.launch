@@ -2,9 +2,9 @@
 
 <launch>
     <arg name="is_animation" default="true"/>
-    <arg name="animation_time" default="1"/>
+    <arg name="animation_time" default="10"/>
 
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rviz_gaussian_distribution)/examples/layout.rviz"/>
+<!--     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find rviz_gaussian_distribution)/examples/layout.rviz"/> -->
 
     <node pkg="rviz_gaussian_distribution" type="main.py" name="example_server" output="screen">
         <param name="is_animation" value="$(arg is_animation)"/>
