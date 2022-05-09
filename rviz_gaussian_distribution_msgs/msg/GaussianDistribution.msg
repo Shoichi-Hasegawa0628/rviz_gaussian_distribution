@@ -5,6 +5,7 @@ float32 std_x
 float32 std_y
 float32 covariance
 float32 probability
+float32 mixture_ratio
 uint8 r
 uint8 g
 uint8 b

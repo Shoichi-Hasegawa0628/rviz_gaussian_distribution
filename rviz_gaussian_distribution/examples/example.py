@@ -21,10 +21,11 @@ def publish_distribution(id_):
 
     """
     # Generate random 3D points．
-    center_x = random.random() * 4 - 2
-    center_y = random.random() * 4 - 2
+    center_x = random.random() * 9 - 9
+    center_y = random.random() * 9 - 8
     x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
     y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    mixture_ratio = np.random.random()
 
     # Calc parameters of Gaussian distribution．
     mu_x = np.mean(x)
@@ -44,6 +45,7 @@ def publish_distribution(id_):
         mean_x=mu_x, mean_y=mu_y,
         std_x=sigma_x, std_y=sigma_y,
         covariance=covariance,
+        mixture_ratio=mixture_ratio,
         r=r, g=g, b=b,
         id=id_
     )
@@ -96,6 +98,7 @@ def action_distribution(id_):
     center_y = random.random() * 4 - 2
     x = center_x + (np.random.random(size=100) * (0.5 + random.random() * 2))
     y = center_y + (np.random.random(size=100) * (0.5 + random.random() * 2))
+    mixture_ratio = np.random.random()
 
     # Calc parameters of Gaussian distribution．
     mu_x = np.mean(x)
@@ -114,6 +117,7 @@ def action_distribution(id_):
         mean_x=mu_x, mean_y=mu_y,
         std_x=sigma_x, std_y=sigma_y,
         covariance=covariance,
+        mixture_ratio=mixture_ratio,
         r=r, g=g, b=b,
         id=id_
     )
@@ -158,11 +162,12 @@ if __name__ == "__main__":
     rospy.sleep(2.0)
 
     # Publish Gaussian distributions
-    for i in range(5):
+    for i in range(10):
         if not rospy.is_shutdown():
             publish_distribution(id_=i)
             rospy.sleep(1.0)
 
+    rospy.sleep(10.0)
     # Remove published distributions
     for i in range(2):
         if not rospy.is_shutdown():
@@ -174,17 +179,17 @@ if __name__ == "__main__":
     rospy.sleep(1.0)
 
     # Action send Gaussian distributions
-    for i in range(5):
-        if not rospy.is_shutdown():
-            action_distribution(id_=i)
-            rospy.sleep(1.0)
+    # for i in range(5):
+    #     if not rospy.is_shutdown():
+    #         action_distribution(id_=i)
+    #         rospy.sleep(1.0)
 
     # Remove published distributions
-    for i in range(2):
-        if not rospy.is_shutdown():
-            action_remove(id_=i)
-            rospy.sleep(1.0)
+    # for i in range(2):
+    #     if not rospy.is_shutdown():
+    #         action_remove(id_=i)
+    #         rospy.sleep(1.0)
 
     # Clear published distributions
-    action_clear()
+    # action_clear()
     rospy.sleep(1.0)

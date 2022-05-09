@@ -109,6 +109,7 @@ class VisualizerNode:
             std_y=msg.std_y,
             covariance=msg.covariance,
         )
+        xyz[:, 2] *= msg.mixture_ratio
         rgb = np.full_like(xyz, fill_value=(msg.r, msg.g, msg.b))
         alpha = self.calc_alpha(xyz[..., 2])
         visualized_distribution = Distribution(xyz, rgb, alpha)
