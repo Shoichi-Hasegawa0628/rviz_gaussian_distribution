@@ -14,7 +14,7 @@ from modules import dataset
 #   ROS Publisher Method
 #
 # ==================================================================================================
-def publish_distribution(i, mu_set, sigma_set):
+def publish_distribution(i, mu_set, sigma_set, r, g, b):
 
     # Calc parameters of Gaussian distribution．
     mu_x = mu_set[i][0]
@@ -22,16 +22,13 @@ def publish_distribution(i, mu_set, sigma_set):
     sigma_x = np.sqrt(sigma_set[i][0][0])
     sigma_y = np.sqrt(sigma_set[i][1][1])
     covariance = sigma_set[i][0][1]
-    r = random.randint(0, 255)
-    g = random.randint(0, 255)
-    b = random.randint(0, 255)
 
     # Publish
     publisher = rospy.Publisher("/input/add", rgd_msgs.GaussianDistribution, queue_size=1)
     rospy.sleep(0.5)
 
     msg = rgd_msgs.GaussianDistribution(
-        mean_x=mu_x, mean_y=mu_y,
+        mean_x=mu_x-5.0, mean_y=mu_y,
         std_x=sigma_x, std_y=sigma_y,
         covariance=covariance,
         mixture_ratio=1.0,
@@ -60,8 +57,8 @@ def publish_clear():
     Clear published distributions
     """
     publisher = rospy.Publisher("/input/clear", std_msgs.Empty, queue_size=1)
-    test_publisher = rospy.Publisher("/test/clear", std_msgs.Empty, queue_size=1)
-    rospy.sleep(0.1)
+    test_publisher = rospy.Publisher("/place_object_word/input/clear", std_msgs.Empty, queue_size=1)
+    rospy.sleep(0.5)
 
     msg = std_msgs.Empty()
     publisher.publish(msg)
@@ -69,18 +66,19 @@ def publish_clear():
 
 
 
-def pub_words_objects_dist(_id, mu, words, words_dist, objects, objects_dist):    
-    pub = rospy.Publisher('/test/input', rviz_display_words_distribution_msg.WordObjectDistribution, queue_size=1)    
+def pub_words_objects_dist(_id, mu, words, words_dist, objects, objects_dist, r, g, b):
+    pub = rospy.Publisher('/place_object_word/input/add', rviz_display_words_distribution_msg.WordObjectDistribution, queue_size=1)    
     rospy.sleep(0.5)
     
     msg = rviz_display_words_distribution_msg.WordObjectDistribution(    
         id=_id,
-        mean_x = mu[i][0],
+        mean_x = mu[i][0]-5.0,
         mean_y = mu[i][1],    
         words=words[0],
         words_dist=words_dist[i],
         objects=objects[0],
-        objects_dist=objects_dist[i]    
+        objects_dist=objects_dist[i],
+        r=r, g=g, b=b
     )
     
     pub.publish(msg)
@@ -153,6 +151,8 @@ if __name__ == "__main__":
     rospy.init_node("example_client")
     rospy.sleep(2.0)
 
+    colors = [(255, 0, 0), (167, 87, 168), (255, 165, 0), (234, 145, 152), (254, 220, 189), (255, 244, 80)]
+
     mu_set, K = dataset.read_mean_of_Gaussian_distribution()
     sigma_set = dataset.read_variance_of_Gaussian_distribution()
     phi_set = dataset.read_mixture_ratio_of_Gaussuan_distribution()
@@ -168,10 +168,39 @@ if __name__ == "__main__":
     # Publish Gaussian distributions
     for i in range(K):
         if not rospy.is_shutdown():
-            publish_distribution(i, mu_set, sigma_set)
-            pub_words_objects_dist(i, mu_set, words, words_dist, object_words, object_words_dist)
+            b, g, r = colors.pop()
+            publish_distribution(i, mu_set, sigma_set, r, g, b)
+            pub_words_objects_dist(i, mu_set, [[]], words_dist, object_words, object_words_dist, r, g, b)
             rospy.sleep(1.0)
         
-    rospy.sleep(5.0)
+    rospy.sleep(10.0)
+
+    publish_clear()
+
+    colors = [(255, 0, 0), (167, 87, 168), (255, 165, 0), (234, 145, 152), (254, 220, 189), (255, 244, 80)]
+
+    # Publish Gaussian distributions
+    for i in range(K):
+        if not rospy.is_shutdown():
+            b, g, r = colors.pop()
+            publish_distribution(i, mu_set, sigma_set, r, g, b)
+            pub_words_objects_dist(i, mu_set, words, words_dist, [[]], object_words_dist, r, g, b)
+            rospy.sleep(1.0)
+        
+    rospy.sleep(10.0)
+
+    publish_clear()
+
+    colors = [(255, 0, 0), (167, 87, 168), (255, 165, 0), (234, 145, 152), (254, 220, 189), (255, 244, 80)]
+
+    # Publish Gaussian distributions
+    for i in range(K):
+        if not rospy.is_shutdown():
+            b, g, r = colors.pop()
+            publish_distribution(i, mu_set, sigma_set, r, g, b)
+            pub_words_objects_dist(i, mu_set, words, words_dist, object_words, object_words_dist, r, g, b)
+            rospy.sleep(1.0)
+        
+    rospy.sleep(10.0)
 
     publish_clear()
